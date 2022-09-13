@@ -60,7 +60,7 @@ class EnergyAndDistances:
         for distance in distance_list:
             if min <= distance <= max:
                 counter += 1
-        if counter == condition:
+        if counter >= condition:
             return counter
 
 
@@ -70,23 +70,17 @@ class EnergyAndDistances:
             Calculate percentage of data in interval for all the fnq
         """
         df = self.extract_distances()
-        df_ = df.iloc[:, 2:].apply(lambda x: self.verify_intervals(x, min, max, condition), axis=1)
+        df_ = df.iloc[:, 2:].apply(self.verify_intervals, args=(min, max, condition), axis=1)
         return round((df_.count() * 100 ) / len(df_), 3)
 
     
-    def distances_in_interval_by_fnq(self, fnq: str, min: float, max: float, condition: int = 1):
+    def distances_in_interval_by_fnq(self, fnq: str, min: float, max: float, condition: int):
         """
             Calculate percentage of data in interval for an specific fnq
         """
         df = self.extract_distances_by_fnq(fnq=fnq)
-        df_ = df.iloc[:, 2:].apply(lambda x: self.verify_intervals(x, min, max, condition), axis=1)
-        counter = 0
-        for x in list(df_):
-        
-            if x == condition:
-                counter += 1
-             
-        return round((counter * 100 ) / len(df_), 3)
+        df_ = df.iloc[:, 2:].apply(self.verify_intervals, args=(min, max, condition), axis=1)             
+        return round((df_.count() * 100 ) / len(df_), 3)
 
     
     ############################# ENERGIES AND DISTANCES ####################################
