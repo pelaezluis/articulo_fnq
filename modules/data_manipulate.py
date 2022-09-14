@@ -64,7 +64,6 @@ class EnergyAndDistances:
             return counter
 
 
-
     def count_distances_in_interval(self, min: float, max: float, condition: int = 1):
         """
             Calculate percentage of data in interval for all the fnq
@@ -82,7 +81,33 @@ class EnergyAndDistances:
         df_ = df.iloc[:, 2:].apply(self.verify_intervals, args=(min, max, condition), axis=1)             
         return round((df_.count() * 100 ) / len(df_), 3)
 
-    
+
+    def fnq_list(self) -> list:
+        df = self.extract_distances()
+        fnqs = df['FNQ'].unique()
+        return sorted(fnqs)
+
+
+    def matrix_interval_distance(self, min: float, max: float, output_file: str = ''):
+        fnqs = self.fnq_list()
+        params = ['1', '2', '3', '4']
+        df = {'Parameters': params}
+        print('#'*53)
+        for fnq in fnqs:
+            percentages_per_fnq = []
+            for cont in range(1, 5):
+                percentage = self.distances_in_interval_by_fnq(fnq, min, max, cont)
+                print(f'# Para {fnq} con {cont} parametros el porcentaje es: {percentage} ')
+                percentages_per_fnq.append(percentage)
+            df[fnq] = percentages_per_fnq
+            print('#'*53)
+        df = pd.DataFrame(df)
+        if output_file != '':
+            df.to_csv(output_file, index=False)
+            return df
+        else:
+            return df
+                
     ############################# ENERGIES AND DISTANCES ####################################
 
 
